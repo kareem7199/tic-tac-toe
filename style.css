@@ -118,11 +118,13 @@ body {
 
 .x {
     color: rgb(47, 195, 190);
-    margin-right: 10px;
 }
 
 .o {
     color: #F2B237;
+}
+
+.screen .x , .screen .o{
     margin-right: 10px;
 }
 

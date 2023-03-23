@@ -83,7 +83,7 @@ const handleWinner = () => {
             result[0].style.display = "block";
             result[0].innerHTML = `
             <p class = "${winner.player.toLowerCase()}" style="font-size:160px;">${winner.player}</p>
-            <p style="font-size:60px;color:white;">TAKES THE ROUND</p>
+            <p style="font-size:40px;color:white;">TAKES THE ROUND</p>
             <div class="btn" onclick="playAgain()">
             <a>Play Again</a>
             </div>
