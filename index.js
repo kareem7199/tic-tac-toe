@@ -2,8 +2,10 @@ const cells = document.getElementsByClassName("cell");
 const turn = document.getElementsByClassName("turn");
 const gameBody = document.getElementsByClassName("game");
 const result = document.getElementsByClassName("result");
+const turnScreen = document.getElementsByClassName("turns");
 let oTurn = false;
 let turns = 0;
+let rows = document.getElementsByClassName("row");
 let game = [
     ["*", "*", "*"],
     ["*", "*", "*"],
@@ -12,57 +14,86 @@ let game = [
 let row = 0;
 let column = 0;
 let winner = null;
-turn[+oTurn].style.backgroundColor = "#F9D459";
+turnScreen[0].innerHTML = `<span class="${turn[+oTurn].innerHTML.toLowerCase()}">${turn[+oTurn].innerHTML}</span>Turn`;
 
-const playAgain = ()=>{
-    game = [
-        ["*", "*", "*"],
-        ["*", "*", "*"],
-        ["*", "*", "*"]
-    ];
-    oTurn = false;
-    turns = 0;
-    winner = null;
-    turn[0].style.backgroundColor = "#F9D459";
-    turn[1].style.backgroundColor = "#D10757";
-    for(let i = 0 ; i < cells.length ; i++){
-        cells[i].innerHTML="";
-        cells[i].style.backgroundColor = "#D10757";
+if (!localStorage.getItem("X"))
+    localStorage.setItem("X", 0);
+
+if (!localStorage.getItem("tie"))
+    localStorage.setItem("tie", 0);
+
+if (!localStorage.getItem("O"))
+    localStorage.setItem("O", 0);
+rows[3].children[0].children[1].innerHTML = localStorage.getItem("X");
+rows[3].children[1].children[1].innerHTML = localStorage.getItem("tie");
+rows[3].children[2].children[1].innerHTML = localStorage.getItem("O");
+const playAgain = () => {
+    if (!winner) {
+        turn[0].style.display = "block";
+        turn[1].style.display = "block";
+        game = [
+            ["*", "*", "*"],
+            ["*", "*", "*"],
+            ["*", "*", "*"]
+        ];
+        oTurn = false;
+        turns = 0;
+        winner = null;
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].innerHTML = "";
+            cells[i].style.backgroundColor = "#1E3640";
+        }
+        gameBody[0].style.display = "block";
+        result[0].style.display = "none";
+        turnScreen[0].innerHTML = `<span class="${turn[+oTurn].innerHTML.toLowerCase()}">${turn[+oTurn].innerHTML}</span>Turn`;
     }
-    gameBody[0].style.display = "block";
-    result[0].style.display = "none";
 }
+
 const handleWinner = () => {
     if (winner === "draw") {
+        let total = localStorage.getItem("tie");
+        total = +total;
+        total += 1;
+        localStorage.setItem("tie", total);
+        winner = null;
         gameBody[0].style.display = "none";
         result[0].style.display = "block";
         result[0].innerHTML = `
-        <p style="font-size:160px"><span style="color:rgb(249, 212, 89);">X</span> <span style="color:#D10757;">O</span></p>
+        <p style="font-size:160px"><span style="color:rgb(47, 195, 190);">X</span> <span style="color:#F2B237;">O</span></p>
         <p style="font-size:60px;color:white;">DRAW!</p>
-        <div class="btn">
+        <div class="btn" onclick="playAgain()">
                 <a>Play Again</a>
         </div>
         `
     }
     else {
+        let total = localStorage.getItem(`${winner.player}`);
+        total = +total;
+        total += 1;
+        localStorage.setItem(`${winner.player}`, total);
         let time = 0;
         for (let i = 0; i < 3; i++) {
             setTimeout(() => {
-                gameBody[0].children[winner.position[i][0] + 1].children[winner.position[i][1]].style.backgroundColor = "#F9D459";
+                gameBody[0].children[winner.position[i][0] + 1].children[winner.position[i][1]].style.backgroundColor = "#19625E";
+                gameBody[0].children[winner.position[i][0] + 1].children[winner.position[i][1]].style.color = "#0D1C23";
             }, time += 1000);
         }
         setTimeout(() => {
             gameBody[0].style.display = "none";
             result[0].style.display = "block";
             result[0].innerHTML = `
-            <p style="font-size:160px;color:#D10757;">${winner.player}</p>
-            <p style="font-size:60px;color:white;">WINNER!</p>
+            <p class = "${winner.player.toLowerCase()}" style="font-size:160px;">${winner.player}</p>
+            <p style="font-size:60px;color:white;">TAKES THE ROUND</p>
             <div class="btn" onclick="playAgain()">
-                <a>Play Again</a>
+            <a>Play Again</a>
             </div>
             `
+            winner = null;
         }, 4000);
     }
+    rows[3].children[0].children[1].innerHTML = localStorage.getItem("X");
+    rows[3].children[1].children[1].innerHTML = localStorage.getItem("tie");
+    rows[3].children[2].children[1].innerHTML = localStorage.getItem("O");
 }
 
 for (let i = 0; i < cells.length; i++) {
@@ -72,10 +103,10 @@ for (let i = 0; i < cells.length; i++) {
         if (!winner) {
             if (game[x][y] != "X" && game[x][y] != "O") {
                 game[x][y] = turn[+oTurn].innerHTML
+                turns % 2 == 0 ? cells[i].style.color = "#2FC3BE" : cells[i].style.color = "#F3B134";
                 cells[i].innerHTML = game[x][y];
-                turn[+oTurn].style.backgroundColor = "#D10757";
                 oTurn = !oTurn;
-                turn[+oTurn].style.backgroundColor = "#F9D459";
+                turnScreen[0].innerHTML = `<span class="${turn[+oTurn].innerHTML.toLowerCase()}">${turn[+oTurn].innerHTML}</span>Turn`;
                 turns++;
             }
             for (let j = 0; j < 3; j++) {
